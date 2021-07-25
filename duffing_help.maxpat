@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 35.0, 88.0, 770.0, 927.0 ],
+		"rect" : [ 35.0, 88.0, 1610.0, 927.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,6 +40,19 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 658.0, 114.0, 81.0, 22.0 ],
+					"presentation_linecount" : 2,
+					"text" : "input_type $1"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"format" : 6,
 					"id" : "obj-42",
 					"maxclass" : "flonum",
@@ -59,7 +72,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 590.0, 114.0, 62.0, 22.0 ],
-					"presentation_linecount" : 3,
 					"text" : "omega $1"
 				}
 
@@ -86,30 +98,6 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 535.0, 114.0, 35.0, 22.0 ],
 					"text" : "dt $1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-39",
-					"maxclass" : "toggle",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "int" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 100.0, 32.0, 24.0, 24.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-37",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 102.0, 91.0, 87.0, 22.0 ],
-					"text" : "filter_toggle $1"
 				}
 
 			}
@@ -301,18 +289,6 @@
 			}
 , 			{
 				"box" : 				{
-					"attr" : "distortion",
-					"id" : "obj-1",
-					"maxclass" : "attrui",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 147.0, 17.0, 289.0, 22.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -427,11 +403,11 @@
 				"box" : 				{
 					"id" : "obj-15",
 					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 25.0, 17.0, 44.0, 22.0 ],
-					"text" : "noise~"
+					"patching_rect" : [ 25.0, 17.0, 53.0, 22.0 ],
+					"text" : "cycle~ 5"
 				}
 
 			}
@@ -536,20 +512,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-37", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-37", 0 ],
-					"source" : [ "obj-39", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-18", 0 ],
 					"source" : [ "obj-4", 1 ]
 				}
@@ -634,6 +596,13 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-5", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-12", 0 ],
 					"source" : [ "obj-6", 0 ]
 				}
@@ -650,7 +619,7 @@
 		"dependency_cache" : [ 			{
 				"name" : "gutter_upsample.maxpat",
 				"bootpath" : "~/dev/guttersynth-max",
-				"patcherrelativepath" : "../guttersynth-max",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
