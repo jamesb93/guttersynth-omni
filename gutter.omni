@@ -29,13 +29,6 @@ init:
     dy = 0.0
     t = 0.0    
 
-    # past storage
-    gamma_past = gamma
-    omega_past = omega
-    c_past = c
-    dt_past = dt
-    smooth_past = smoothing
-
     # 2 Data
     freq1 = Data[float](num_filters)
     freq2 = Data[float](num_filters)
@@ -92,9 +85,3 @@ sample:
     t += dt
     
     out1 = finalY * 0.125
-
-    # Store 'now' in the 'past'
-    gamma_past = gamma
-    omega_past = omega
-    c_past = c
-    dt_past = dt
