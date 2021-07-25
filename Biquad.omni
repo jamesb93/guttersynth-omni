@@ -1,0 +1,42 @@
+const PI_POW_3* = PI * PI * PI
+const PI_POW_5* = PI * PI * PI * PI * PI
+const a* = 3.260e-01 * PI_POW_3
+const b* = 1.823e-01 * PI_POW_5
+
+struct Biquad:
+    a0; a1; a2; b1; b2 
+    Q=0.9; K; norm;
+    freq=100.0;
+    prevX1=0.0; prevX2=0.0; prevY1=0.0; prevY2=0.0; y=0.0;
+
+def zap(x):
+    absx = abs(x)
+    return if(absx > 1.0e-15 and absx <= 2.0): x else: 0.0
+
+def fast_tan(f):
+    f2 = f * f
+    return f * (PI + f2 * (a + b * f2));
+
+def calculate_coeffs(this):
+    this.K = fast_tan(PI * this.freq / samplerate)
+    this.norm = 1.0 / (1.0 + this.K / this.Q + this.K * this.K)
+
+    this.a0 = this.K / this.Q * this.norm
+    this.a1 = 0.0;
+    this.a2 = -this.a0
+    this.b1 = 2.0 * (this.K * this.K - 1) * this.norm
+    this.b2 = (1.0 - this.K / this.Q + this.K * this.K) * this.norm
+
+def next_sample(this, duffX):
+    this.y = (
+        this.a0 * duffX + 
+        this.a1 * this.prevX1 + 
+        this.a2 * this.prevX2 - 
+        this.b1 * this.prevY1 - 
+        this.b2 * this.prevY2
+    ) 
+    this.prevX2 = zap(this.prevX1)
+    this.prevX1 = zap(duffX)
+    this.prevY2 = zap(this.prevY1)
+    this.prevY1 = zap(this.y)
+    

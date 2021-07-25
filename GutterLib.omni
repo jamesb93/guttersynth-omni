@@ -1,0 +1,31 @@
+def lowpass(new_val, old_val, smoothing):
+    return (new_val - old_val) / smoothing
+
+def fast_atan(value):
+    return (value / (1.0 + 0.28 * (value * value)))
+
+def var_clip(value, shape):
+    inv_atan_shape = 1.0 / fast_atan(shape);
+    return inv_atan_shape * fast_atan(value * shape)
+
+def distort(value, type):
+    if type == 0:
+        return value
+
+    elif type == 1:
+        return clip(value, -1.0, 1.0)
+
+    elif type == 2:
+        return var_clip(value, 3)
+
+    elif type == 3:
+        return fast_atan(value)
+
+    elif type == 4:
+        return 0.75 * (
+            sqrt(
+                ((value * 1.3) * (value * 1.3) + 1.0)
+            ) * 1.65 - 1.65) / value
+
+    elif type == 5:
+        return (0.1076 * value * value * value + 3.029 * value) / (value * value + 3.124) 
