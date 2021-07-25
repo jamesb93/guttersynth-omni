@@ -18,6 +18,7 @@ params:
     distortion {2, 0, 5}
     filter_toggle {1, 0, 1}
     q_param {0.9, 0.0, 1.0}
+    input_type {0, 0}
 
 init:
     num_banks = 2
@@ -74,8 +75,10 @@ sample:
         finalY = duffX
 
     # DUFFING
-    dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * in1
-    # dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * sin(omega * t)
+    if input_type == 0:
+        dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * in1
+    else:
+        dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * sin(omega * t)
     
     duffY += dy
     dx = duffY
