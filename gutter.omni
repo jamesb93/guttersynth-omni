@@ -3,7 +3,6 @@ use "GutterLib.omni";
 
 buffers:
     freqs
-    q
 
 params:
     gamma {0.2, 0, 10}
@@ -32,12 +31,21 @@ init:
     dy = 0.0
     t = 0.0 
 
+    # internal values because we cannot assign to parameters
+
+    gamma_lp = gamma
+    omega_lp = omega
+    c_lp = c
+    dt_lp = dt
+    q_lp = q
+    smoothing_lp = smoothing
+
     filter_bank = Data[Data[Biquad]](num_banks)
     for bank_index, bank in filter_bank:
         bank = Data[Biquad](num_filters)
         for filter in bank:
             filter = Biquad()
-            filter.Q = q
+            filter.Q = q_Lp
             if bank_index == 0:
                 filter.gain = gain1
             elif bank_index == 1:
@@ -55,7 +63,7 @@ perform:
     for bank_index, bank in filter_bank:
         for filter_index, filter in bank:
             filter.freq = freqs[filter_index]
-            filter.Q = q
+            filter.Q = q_lp
             if bank_index == 0:
                 filter.gain = gain1
             elif bank_index == 1:
@@ -63,6 +71,14 @@ perform:
             filter.calculate_coeffs()
 
     sample:
+
+        smoothing_lp = lowpass(smoothing, smoothing_lp, smoothing+1)
+        gamma_lp = lowpass(gamma, gamma_lp, smoothing_lp+1)
+        omega_lp = lowpass(omega, omega_lp, smoothing_lp+1)
+        c_lp = lowpass(c, c_lp, smoothing_lp+1)
+        dt_lp = lowpass(dt, dt_lp, smoothing_lp+1)
+        q_lp = lowpass(q, q_lp, smoothing_lp+1)
+
         finalY = 0
         # Filter Bank
         if filter_toggle == 1:
@@ -75,13 +91,13 @@ perform:
 
         # DUFFING
         if enable_audio_input == 1:
-            dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * in1
+            dy = finalY - (finalY * finalY * finalY) - (c_lp * duffY) + gamma_lp * in1
         else:
-            dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * sin(omega * t)
+            dy = finalY - (finalY * finalY * finalY) - (c_lp * duffY) + gamma_lp * sin(omega_lp * t)
         
         duffY += dy
         dx = duffY
-        duffX = lowpass(finalY + dx, duffX, smoothing + 1)
+        duffX = lowpass(finalY + dx, duffX, smoothing_lp+1)
 
         if filter_toggle == 1:
             duffX = distort(duffX, distortion)
@@ -97,6 +113,6 @@ perform:
 
             out1 = clip(duffX * master_gain, -1.0, 1.0)
 
-        t += dt
+        t += dt_lp
     
             
