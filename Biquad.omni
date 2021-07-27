@@ -8,10 +8,11 @@ struct Biquad:
     Q=0.9; K; norm;
     freq=100.0;
     prevX1=0.0; prevX2=0.0; prevY1=0.0; prevY2=0.0; y=0.0;
+    gain=1.0;
 
 def zap(x):
     absx = abs(x)
-    if(absx > 1.0e-15 and absx < 1.0e15):
+    if(absx > 1.0e-15 and absx < 1.0e3):
         return x 
     else: 
         return 0.0
@@ -30,14 +31,14 @@ def calculate_coeffs(this):
     this.b1 = 2.0 * (this.K * this.K - 1) * this.norm
     this.b2 = (1.0 - this.K / this.Q + this.K * this.K) * this.norm
 
-def next_sample(this, duffX):
+def next_sample(this, duffX, master_gain):
     this.y = (
         this.a0 * duffX + 
         this.a1 * this.prevX1 + 
         this.a2 * this.prevX2 - 
         this.b1 * this.prevY1 - 
         this.b2 * this.prevY2
-    ) 
+    )
     this.prevX2 = zap(this.prevX1)
     this.prevX1 = zap(duffX)
     this.prevY2 = zap(this.prevY1)
