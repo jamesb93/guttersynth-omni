@@ -19,6 +19,7 @@ params:
     filter_toggle {1, 0, 1}
     q_param {0.9, 0.0, 1.0}
     enable_audio_input {0, 0, 1}
+    update_coeffs {1, 0, 1}
 
 init:
     num_banks = 2
@@ -28,14 +29,11 @@ init:
     duffY = 0.0
     dx = 0.0
     dy = 0.0
-    t = 0.0    
+    t = 0.0 
 
-    # 2 Data
-    freq1 = Data[float](num_filters)
-    freq2 = Data[float](num_filters)
-    filter_bank = Data[Data[Biquad]](2)
+    filter_bank = Data[Data[Biquad]](num_banks)
     for bank in filter_bank:
-        bank = Data[Biquad](24)
+        bank = Data[Biquad](num_filters)
         for filter in bank:
             filter = Biquad()
             # filter.freq = (noise() * 15000) + 100
@@ -48,43 +46,38 @@ def reset_duff():
     dy = 0.0
     t = 0.0
 
-sample:
-    finalY = 0
-
-    # Filter Bank
-    if filter_toggle == 1:
+perform: 
+    if update_coeffs == 1:
         for bank in filter_bank:
-            counter = 0
-            for filter in bank:
+            for counter, filter in bank:
                 filter.freq = freqs[counter]
-                filter.Q = q_param
+                filter.Q = q_param      
                 filter.calculate_coeffs()
-                out9 = filter.freq
-                counter += 1
-                
-                filter.next_sample(duffX)
-                finalY += zap(filter.y)
-                out2 = filter.a0
-                out3 = filter.a1
-                out4 = filter.a2
-                out5 = filter.b1
-                out6 = filter.b2
-                out7 = filter.K
-                out8 = filter.norm
-    else:
-        finalY = duffX
 
-    # DUFFING
-    if enable_audio_input == 1:
-        dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * in1
-    else:
-        dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * sin(omega * t)
-    
-    duffY += dy
-    dx = duffY
-    duffX = lowpass(finalY + dx, duffX, smoothing + 1)
-    duffX = distort(duffX, distortion)
+    sample:
+        finalY = 0
 
-    t += dt
-    
-    out1 = finalY * 0.125
+        # Filter Bank
+        if filter_toggle == 1:
+            for bank in filter_bank:
+                for filter in bank:                   
+                    filter.next_sample(duffX)
+                    finalY += zap(filter.y)
+        else:
+            finalY = duffX
+
+        # DUFFING
+        if enable_audio_input == 1:
+            dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * in1
+        else:
+            dy = finalY - (finalY * finalY * finalY) - (c * duffY) + gamma * sin(omega * t)
+        
+        duffY += dy
+        dx = duffY
+        duffX = lowpass(finalY + dx, duffX, smoothing + 1)
+        duffX = distort(duffX, distortion)
+
+        t += dt
+        
+        out1 = finalY * 0.125
+            
