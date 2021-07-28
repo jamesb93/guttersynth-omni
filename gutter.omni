@@ -9,7 +9,7 @@ params:
     omega {0.0002, 0.0001, 1}
     c {0.01, 0.0001, 1}
     dt {0.03, 0, 5}
-    smoothing {1.0, 0, 5}
+    smoothing {1.0, 0.1, 5}
     distortion {1, 0, 5}
     q {20, 2.5, 800}
 
@@ -44,7 +44,7 @@ init:
         bank = Data[Biquad](num_filters)
         for filter in bank:
             filter = Biquad()
-            filter.Q = q_Lp
+            filter.Q = q_lp
             if bank_index == 0:
                 filter.gain = gain1
             elif bank_index == 1:
