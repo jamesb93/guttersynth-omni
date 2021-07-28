@@ -19,7 +19,6 @@ params:
 
     filter_toggle {1, 0, 1}
     enable_audio_input {0, 0, 1}
-    update_coeffs {1, 0, 1}
 
 init:
     num_banks = 2
@@ -59,7 +58,6 @@ def reset_duff():
     t = 0.0
 
 perform:
-    
     for bank_index, bank in filter_bank:
         for filter_index, filter in bank:
             filter.freq = freqs[filter_index]
